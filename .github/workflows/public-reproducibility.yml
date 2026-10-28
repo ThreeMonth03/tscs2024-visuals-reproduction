@@ -1,0 +1,111 @@
+name: Public survey workflow and aggregate checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-reproducibility-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  aggregate-checks:
+    name: Verify aggregates and regenerate 9 figures
+    # Evaluated before a runner is allocated. Private forks do not consume minutes.
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14.4'
+      - name: Check reviewed public file inventory
+        run: python ci/check_release.py
+      - name: Install analysis and notebook runtime
+        run: |
+          python -m pip install --only-binary=:all: -r requirements-notebook.txt
+      - name: Test validation gates with invalid-input cases
+        run: python -m unittest discover -s tests -v
+      - name: Verify frozen bundle and recalculate BY adjustments
+        run: python ci/check_aggregates.py --output build/aggregate-checks.json
+      - name: Verify references and PDF inventory
+        run: python ci/check_references.py
+      - name: Install CJK font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes --no-install-recommends fonts-noto-cjk
+      - name: Regenerate figures from released aggregates
+        run: >-
+          python ci/build_public_figures.py
+          --output-dir build/figures
+          --font /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
+      - name: Describe completed checks
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ## Completed public checks
+
+          - Reviewed file inventory, private-data format checks and validator regression tests.
+          - Aggregate table hashes, reference licenses and Python syntax.
+          - BY141/BY266 corrections, fixed comparison counts and sensitivity flags from aggregate result tables.
+          - Nine figures regenerated from archived aggregate profiles (258 selected rows).
+
+          These checks validate existing aggregates and software behavior. The Binder job additionally estimates statistics from generated artificial observations. No actual respondent data are downloaded, used or uploaded.
+          EOF
+      - name: Upload aggregate verification and figures
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aggregate-checks-and-figures
+          path: |
+            build/aggregate-checks.json
+            build/figures/*.png
+            build/figures/*.pdf
+            build/figures/figures_manifest.json
+            build/figures/selected_profiles.csv
+          if-no-files-found: error
+          retention-days: 14
+
+  binder-notebook:
+    name: Build Binder image and execute public notebook
+    needs: aggregate-checks
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Build the same fixed image used by Binder
+        run: docker build --file .binder/Dockerfile --tag tscs-binder .
+      - name: Execute aggregate and artificial-input notebooks
+        run: |
+          mkdir -p "$RUNNER_TEMP/notebook-output"
+          chmod 777 "$RUNNER_TEMP/notebook-output"
+          docker run --rm \
+            --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
+            tscs-binder \
+            python ci/execute_notebook.py --output-dir /tmp/notebook-output/run
+          docker run --rm \
+            --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
+            tscs-binder \
+            bash -c 'python run.py demo --output-dir /tmp/demo-input && python ci/execute_notebook.py --mode survey --data-file /tmp/demo-input/survey.sav --profile-file /tmp/demo-input/profile.json --calibration-file /tmp/demo-input/calibration.json --output-dir /tmp/notebook-output/survey-run'
+          echo 'Binder image built; aggregate and manual-input notebooks executed. Manual input used artificial observations only.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload public notebook receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: binder-public-notebook
+          path: |
+            ${{ runner.temp }}/notebook-output/run/*.json
+            ${{ runner.temp }}/notebook-output/run/*.ipynb
+            ${{ runner.temp }}/notebook-output/run/run/notebook_report.json
+            ${{ runner.temp }}/notebook-output/survey-run/*.json
+            ${{ runner.temp }}/notebook-output/survey-run/run/notebook_report.json
+          if-no-files-found: error
+          retention-days: 14

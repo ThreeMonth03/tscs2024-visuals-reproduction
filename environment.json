@@ -1,0 +1,10 @@
+{
+  "scope": "Manual SAV survey estimation and aggregate verification",
+  "python": "3.14.4",
+  "dependencies": [
+    "requirements.txt",
+    "requirements-figures.txt",
+    "requirements-notebook.txt"
+  ],
+  "respondent_data_required": "Only for survey mode; supplied by the user"
+}

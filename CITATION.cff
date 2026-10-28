@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Please cite this reproduction package and identify the commit used."
+title: "Reproduction package for Generational Differences in Sharing Visuals by Phone and Preserving Digital Files"
+type: software
+license: MIT
+authors:
+  - family-names: "Chang"
+    given-names: "Chun-Shih"
+  - family-names: "Chuang"
+    given-names: "Tyng-Ruey"
+repository-code: "https://github.com/ThreeMonth03/tscs2024-visuals-reproduction"
+url: "https://github.com/ThreeMonth03/tscs2024-visuals-reproduction"
+date-released: 2026-10-29
+version: "2026.10.29"
+keywords:
+  - "Taiwan Social Change Survey"
+  - "photo and video sharing"
+  - "personal digital archiving"
+  - "computational reproducibility"

@@ -1,0 +1,42 @@
+{
+  "DOI": "10.1177/20501579221140761",
+  "title": [
+    "The second-level smartphone divide: A typology of smartphone use based on frequency of use, skills, and types of activities"
+  ],
+  "publisher": "SAGE Publications",
+  "license": [
+    {
+      "start": {
+        "date-parts": [
+          [
+            2022,
+            11,
+            30
+          ]
+        ],
+        "date-time": "2022-11-30T00:00:00Z",
+        "timestamp": 1669766400000
+      },
+      "content-version": "vor",
+      "delay-in-days": 0,
+      "URL": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "start": {
+        "date-parts": [
+          [
+            2022,
+            11,
+            30
+          ]
+        ],
+        "date-time": "2022-11-30T00:00:00Z",
+        "timestamp": 1669766400000
+      },
+      "content-version": "tdm",
+      "delay-in-days": 0,
+      "URL": "https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+    }
+  ],
+  "URL": "https://doi.org/10.1177/20501579221140761"
+}

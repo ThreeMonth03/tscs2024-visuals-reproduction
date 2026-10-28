@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "55493e4c621352959a809a9ed9d2f0468917b04c7dec11b90667ef75f11ed61d",
+      "bytes": 9205
+    },
+    {
+      "path": "LICENSES.md",
+      "sha256": "34cdb97908ec420ca9d246bee28eb2ffc7ee03a9e651d6e9073529fb95d82ce8",
+      "bytes": 3681
+    },
+    {
+      "path": "references.json",
+      "sha256": "82caf96a9c09ad37d6455d26b2ab748bac849598fc589529237d9d8e93645230",
+      "bytes": 20680
+    },
+    {
+      "path": "cited_references.bib",
+      "sha256": "685e683ee21487108f1f0f279ac0331eb10ed7a8f21b77ac26e7cba3afe16891",
+      "bytes": 7568
+    },
+    {
+      "path": "wenz2023_license_metadata.json",
+      "sha256": "14358e311009b9b17bacbe3ed85aabc53a5f4507e5c0f934935a72201792b350",
+      "bytes": 1015
+    },
+    {
+      "path": "niemela2023_license_metadata.json",
+      "sha256": "7d49ab1032c3ade465c6942c273d7f651f0a655a76530df5487f28ac733aeecb",
+      "bytes": 617
+    },
+    {
+      "path": "pdfs/wenz2023.pdf",
+      "sha256": "6b317060340fb9dddfb2ab135fb58fa96e9cd734e77ce660d5c170f8ae483585",
+      "bytes": 612739
+    },
+    {
+      "path": "pdfs/niemela2023.pdf",
+      "sha256": "6133ce51f676657212e849b626f05742e693e88b46790d45ac4d21b5993d5379",
+      "bytes": 692158
+    },
+    {
+      "path": "pdfs/locpersonal.pdf",
+      "sha256": "e9f0b1d51d908ee2dcd5e3e9f7a3904e9ce98d9272e8fa591199da4b85436c67",
+      "bytes": 217276
+    },
+    {
+      "path": "pdfs/moda2024.pdf",
+      "sha256": "7e477e0400f1617116e1d4cff1aff67d2f34b88f001eceb157bfd080ae3f1fc5",
+      "bytes": 6493271
+    },
+    {
+      "path": "pdfs/ndc2020.pdf",
+      "sha256": "2e967be050e44c4f9a24b78394ab524d4401e8528bde98e8308e1e6936c111cc",
+      "bytes": 2018019
+    },
+    {
+      "path": "pdfs/lumley2004.pdf",
+      "sha256": "9ad8e83a56830607ff338de5b2076c3bd25c67670d49fd663b17998eb257991a",
+      "bytes": 503960
+    }
+  ]
+}

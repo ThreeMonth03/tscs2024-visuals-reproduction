@@ -1,0 +1,47 @@
+{
+  "schema_version": 2,
+  "data_included": false,
+  "contents": "Aggregate statistical results only; no respondent records or survey input schema.",
+  "files": {
+    "aggregates/alternative/adjusted_profiles.csv": {
+      "sha256": "0b0100a1dfe3afcc23bbad83c95a0c53cff3e7ebfdf08ef4b00e9183da2cafd9",
+      "bytes": 6182
+    },
+    "aggregates/alternative/descriptive_profiles.csv": {
+      "sha256": "44ba679fa5d63b4df29135876e00c0d941d0cc55b0a07a46bf469d77ac5a506b",
+      "bytes": 385666
+    },
+    "aggregates/alternative/formal_tests.csv": {
+      "sha256": "6080c97d941870045c2d110fb64fa700ef468be110776e7fad56b859520c70ca",
+      "bytes": 38675
+    },
+    "aggregates/contrasts/all_scenarios.csv": {
+      "sha256": "38af9eb9a2c77c7eb5f3f1af46f6597c18d6cea693c768c0f31a72d87cc83e59",
+      "bytes": 5181682
+    },
+    "aggregates/contrasts/contrast_summary.csv": {
+      "sha256": "bfc718b27bd66f6c21f26f5a5b099118e395c335109531abda775297261340a8",
+      "bytes": 138518
+    },
+    "aggregates/contrasts/location_profiles.csv": {
+      "sha256": "36e21aa9000bb8fa1b4cce9e0297de216ebe55ff2e7549be10ca832f08b38da4",
+      "bytes": 16261
+    },
+    "aggregates/primary/adjusted_profiles.csv": {
+      "sha256": "0b86129e3ea61006085b58c5ecb07672c5dde4f46ce3a9600e0426d906b7f0c7",
+      "bytes": 6191
+    },
+    "aggregates/primary/descriptive_profiles.csv": {
+      "sha256": "4745c1a94ae1cf8d35264b04945fe31516864e847662cd78964c244e53b6ffc7",
+      "bytes": 385772
+    },
+    "aggregates/primary/formal_tests.csv": {
+      "sha256": "8c43b76e719d69a9b5587ecaa040e78c16ce3821e38ae5e1534510bd5815d614",
+      "bytes": 38708
+    },
+    "aggregates/primary/scenario_tests.csv": {
+      "sha256": "bef218979543d190191c739420f02724cb97cd45c5a0f891f43f02b9dc99afd1",
+      "bytes": 2176570
+    }
+  }
+}

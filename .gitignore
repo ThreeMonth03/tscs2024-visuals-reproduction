@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+.DS_Store
+output/
+artifacts/
+run-output/
+private-data/
+data/raw/
+data/processed/
+*.sav
+*.xlsx
+*.rds
+*.RData
+node_modules/
+build/
+
+# Local notebook sessions and additional individual-data formats.
+.ipynb_checkpoints/
+notebooks/downloads/
+.codex-build/
+*.xls
+*.dta
+*.parquet
+*.rdata
+
+# User input, mapping profiles and generated survey results.
+data/
+results/
+input-profile*.json
