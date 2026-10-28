@@ -113,6 +113,22 @@ class NotebookExportTests(unittest.TestCase):
             self.assertTrue(json.loads(archive.read("summary.json"))["artificial_data"])
             self.assertFalse(json.loads(archive.read("summary.json"))["calibration_available"])
 
+    def test_zip_distinguishes_population_calibration_from_official_alternative_weights(self):
+        result = export_results(self.root, self.output, self.downloads)
+        with zipfile.ZipFile(result["zip_path"]) as archive:
+            definitions = json.loads(archive.read("summary.json"))["scenario_definitions"]
+            readme = archive.read("README.txt").decode()
+            self.assertIn("additional calibration of the main weights", definitions[
+                "tables/primary/scenario_tests.csv"])
+            for path in ("tables/alternative/*.csv", "tables/contrasts/all_scenarios.csv",
+                         "tables/contrasts/location_profiles.csv", "tables/contrasts/contrast_summary.csv"):
+                self.assertIn("official alternative survey weights", definitions[path])
+            for path, meaning in definitions.items():
+                self.assertIn(f"{path}: {meaning}", readme)
+            for relative in TABLES:
+                self.assertEqual(archive.read("tables/" + relative),
+                                 (self.root / "aggregates" / relative).read_bytes())
+
     def test_partial_or_inconsistent_notebook_run_is_rejected(self):
         for change in ({"status": "partial"}, {"statistical_reestimation": True},
                        {"mode": "unknown"}, {"figure_files": []}, {"input_estimates": "unverified_results"}):

@@ -14,6 +14,17 @@ The published results come from the study of phone photography, video recording,
 
 The package preserves two multiple-testing families: 141 tests and 266 proportion contrasts. Each proportion-contrast scenario includes 98 comparisons for all adults and 84 within each of the two area groups. Changing the set of comparisons would change the adjustment being checked.
 
+The label `alternative` has a table-specific meaning:
+
+| Table or columns | Meaning |
+|---|---|
+| `primary/scenario_tests.csv`, `scenario=alternative` | Additional calibration of the main weights to population margins |
+| The three tables in `alternative/` | Official alternative survey weights |
+| `contrasts/all_scenarios.csv` and `contrasts/location_profiles.csv`, `scenario=alternative` | Official alternative survey weights |
+| `contrasts/contrast_summary.csv`, `alternative_*` columns | Results using official alternative survey weights |
+
+The additional calibration check requires population targets. In survey mode, leaving `CALIBRATION_FILE` blank marks that check unavailable; it does not skip the official alternative-weight analysis. The ZIP includes this table-specific guide in `README.txt` and `summary.json`.
+
 ## What each mode establishes
 
 - File checks identify whether the supplied package matches its recorded contents.

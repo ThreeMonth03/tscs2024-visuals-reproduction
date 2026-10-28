@@ -34,6 +34,23 @@ TABLES = (
     "contrasts/all_scenarios.csv",
     "contrasts/contrast_summary.csv",
 )
+SCENARIO_DEFINITIONS = {
+    "tables/primary/scenario_tests.csv": (
+        "scenario=alternative means additional calibration of the main weights to population margins."
+    ),
+    "tables/alternative/*.csv": (
+        "These three tables use the official alternative survey weights."
+    ),
+    "tables/contrasts/all_scenarios.csv": (
+        "scenario=alternative means the official alternative survey weights."
+    ),
+    "tables/contrasts/location_profiles.csv": (
+        "scenario=alternative means the official alternative survey weights."
+    ),
+    "tables/contrasts/contrast_summary.csv": (
+        "alternative_* columns describe results using the official alternative survey weights."
+    ),
+}
 PRIVATE_COLUMNS = {
     "respondent_id", "respondent", "case_id", "idno", "telephone",
     "phone_number", "email", "address",
@@ -179,10 +196,14 @@ def export_results(root: Path, output_dir: Path, destination_root: Path) -> dict
         "Open index.html to view the nine research figures. The figures/ folder contains PNGs, PDFs, and the plotting aggregates.\n"
         "tables/ contains ten aggregate result tables, grouped as primary, alternative and contrasts.\n"
         "This package excludes respondent records and execution logs.\n"
+        "\nReading the alternative labels:\n"
+        + "\n".join(f"- {path}: {meaning}" for path, meaning in SCENARIO_DEFINITIONS.items())
+        + "\n"
     ).encode("utf-8")
     summary = {"mode": mode, "input_estimates": expected_source,
                "statistical_reestimation": reestimated, "figure_count": len(FIGURES),
                "aggregate_table_count": len(TABLES), "selected_profile_rows": 258,
+               "scenario_definitions": SCENARIO_DEFINITIONS,
                "files": {name: {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
                          for name, data in contents.items()}}
     if reestimated:
