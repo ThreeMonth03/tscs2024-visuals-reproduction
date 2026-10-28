@@ -1,6 +1,6 @@
 # Generational Differences in Sharing Visuals by Phone and Preserving Digital Files
 
-[![Public reproducibility checks](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml/badge.svg)](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml)
+[![Software and public aggregate checks](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml/badge.svg)](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml)
 
 **Original Chinese title:** 使用手機分享影像以及數位保存方式的世代差異分析
 
@@ -40,7 +40,7 @@ Upload to `data/official/` in your local JupyterLab, or set `DATA_FILE` to a fil
 
 Survey mode renders figures from the **current run's newly estimated tables**. Aggregate mode renders the bundled estimates. Both modes provide nine figures and a ZIP of figures and aggregate tables through the Notebook. Inputs, respondent rows, local profiles, metadata catalogues and execution logs are excluded from the ZIP.
 
-No respondent data are distributed or automatically downloaded. Follow the official provider's terms; use cloud processing only when those terms permit it. Public CI runs only in public repositories and tests artificial inputs plus the existing aggregates. It never obtains actual survey records.
+No respondent data are distributed or automatically downloaded. Follow the official provider's terms; use cloud processing only when those terms permit it. CI checks software and existing aggregate results in public repositories only. Basic checks run on each push to `main`, pull request and manual run. The full Notebook test uses artificial data and runs for program, Notebook, environment or analysis-reference changes, or when manually requested. See [CI scope and triggers](docs/CI.md); CI does not establish agreement with an untested official SAV.
 
 ## Documentation
 
