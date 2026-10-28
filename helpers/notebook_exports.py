@@ -1,6 +1,7 @@
 """Export only reviewed figures and aggregate tables from a completed notebook run."""
 from __future__ import annotations
 
+import base64
 import csv
 import hashlib
 from html import escape
@@ -90,8 +91,9 @@ def _csv_shape(content: bytes) -> tuple[list[str], int]:
     return header, count
 
 
-def _preview(reestimated: bool = False, calibration_available: bool | None = None,
+def _preview(pngs: dict[str, bytes], reestimated: bool = False, calibration_available: bool | None = None,
              artificial_data: bool = False) -> str:
+    """Embed validated figure bytes so the gallery works in Jupyter's HTML sandbox."""
     origin = ("Results recalculated from the user-selected survey file."
               if reestimated else
               "Published aggregate results; survey statistics were not reestimated.")
@@ -101,7 +103,8 @@ def _preview(reestimated: bool = False, calibration_available: bool | None = Non
         origin += " The additional population recalibration check was not run because targets were not supplied."
     figures = "\n".join(
         f'<section><h2>{escape(title)}</h2><a href="figures/{name}.pdf">Download PDF</a>'
-        f'<img src="figures/{name}.png" alt="{escape(title)}" loading="lazy"></section>'
+        f'<img src="data:image/png;base64,{base64.b64encode(pngs[name]).decode("ascii")}" '
+        f'alt="{escape(title)}"></section>'
         for name, title in FIGURES.items()
     )
     return ("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\">"
@@ -181,7 +184,10 @@ def export_results(root: Path, output_dir: Path, destination_root: Path) -> dict
             or hashlib.sha256(selected).hexdigest() != figures.get("selected_profiles_sha256")):
         raise ValueError("Invalid selected aggregate profiles")
     contents["figures/selected_profiles.csv"] = selected
-    contents["index.html"] = _preview(reestimated, report.get("calibration_available"), report.get("artificial_data", False)).encode("utf-8")
+    pngs = {name: contents[f"figures/{name}.png"] for name in FIGURES}
+    contents["index.html"] = _preview(
+        pngs, reestimated, report.get("calibration_available"), report.get("artificial_data", False)
+    ).encode("utf-8")
     origin = ("Source: results recalculated from the user-selected survey file.\n"
               if reestimated else
               "Source: published aggregate results; survey statistics were not reestimated.\n")

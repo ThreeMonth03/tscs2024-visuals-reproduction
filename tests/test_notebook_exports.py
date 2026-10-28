@@ -1,5 +1,7 @@
 """Download bundles contain only verified aggregate tables and figure files."""
+import base64
 import hashlib
+from html.parser import HTMLParser
 import json
 from pathlib import Path
 import tempfile
@@ -7,6 +9,20 @@ import unittest
 import zipfile
 
 from helpers.notebook_exports import FIGURES, TABLES, export_results
+
+
+class GalleryParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.images = []
+        self.links = []
+
+    def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        if tag == "img":
+            self.images.append(attributes)
+        elif tag == "a":
+            self.links.append(attributes)
 
 
 class NotebookExportTests(unittest.TestCase):
@@ -81,7 +97,27 @@ class NotebookExportTests(unittest.TestCase):
             self.assertIn(b"refers to photos and videos", archive.read("README.txt"))
             self.assertNotRegex(archive.read("README.txt").decode(), r"[\u4e00-\u9fff]")
             self.assertNotRegex(archive.read("index.html").decode(), r"[\u4e00-\u9fff]")
-        self.assertIn('src="figures/age_frequency.png"', result["index_path"].read_text())
+
+    def test_gallery_embeds_verified_pngs_without_network_image_requests(self):
+        result = export_results(self.root, self.output, self.downloads)
+        gallery = GalleryParser()
+        gallery.feed(result["index_path"].read_text())
+        self.assertEqual(len(gallery.images), len(FIGURES))
+        self.assertEqual([link["href"] for link in gallery.links],
+                         [f"figures/{name}.pdf" for name in FIGURES])
+        with zipfile.ZipFile(result["zip_path"]) as archive:
+            for (name, title), image in zip(FIGURES.items(), gallery.images):
+                with self.subTest(figure=name):
+                    prefix, encoded = image["src"].split(",", 1)
+                    self.assertEqual(prefix, "data:image/png;base64")
+                    embedded = base64.b64decode(encoded, validate=True)
+                    self.assertEqual(embedded, archive.read(f"figures/{name}.png"))
+                    self.assertEqual(embedded, (self.output / f"figures/{name}.png").read_bytes())
+                    self.assertEqual(image["alt"], title)
+                    self.assertNotIn("srcset", image)
+                    self.assertNotIn("loading", image)
+                    self.assertEqual(archive.read(f"figures/{name}.pdf"),
+                                     (self.output / f"figures/{name}.pdf").read_bytes())
 
     def test_survey_export_uses_fresh_tables_and_excludes_input_material(self):
         fresh_inventory = {}

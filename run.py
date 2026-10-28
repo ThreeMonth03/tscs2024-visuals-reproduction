@@ -31,8 +31,10 @@ def main() -> None:
     demo = commands.add_parser("demo", help="Generate artificial data for testing the upload workflow")
     demo.add_argument("--output-dir", type=Path, required=True)
     survey = commands.add_parser("reestimate", help="Reestimate statistics and figures from a user-supplied SAV")
-    survey.add_argument("--data-file", type=Path, required=True)
-    survey.add_argument("--profile-file", type=Path, required=True)
+    survey.add_argument("--data-file", type=Path,
+                        help="SAV path; omitted selects the single SAV in data/official")
+    survey.add_argument("--profile-file", type=Path,
+                        help="Optional confirmed mapping; omitted uses SAV metadata")
     survey.add_argument("--calibration-file", type=Path)
     survey.add_argument("--output-dir", type=Path, required=True)
     survey.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")

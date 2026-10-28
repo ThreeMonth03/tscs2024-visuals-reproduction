@@ -5,11 +5,11 @@ The [workflow](../.github/workflows/public-reproducibility.yml) checks `github.e
 | Job | Checks |
 |---|---|
 | `aggregate-checks` | Reviewed file inventory, input/statistical unit tests, preserved aggregate values, BY corrections, sensitivity summaries, reference rights and nine figures |
-| `binder-notebook` | Builds the Binder image; executes aggregate mode and the complete manual-input mode with generated artificial SAV/profile/calibration files |
+| `binder-notebook` | Builds the Binder image; executes aggregate mode and survey mode with generated artificial inputs, including automatic SAV setup |
 
 CI never downloads or accepts actual respondent records. Its artificial input is generated during the run and is not uploaded as an artifact. Artifacts are selected by explicit paths: aggregate figures, aggregate check reports and Notebook run receipts. Input profiles, SAV files, metadata catalogues and execution logs are excluded.
 
-The Docker test exercises the same interface and dependencies used by Binder. A separate live Binder test checks upload paths, editable settings and HTTP preview/ZIP downloads. Statistical comparison with authorized study data is performed locally; artificial-data success does not establish agreement with the empirical study results.
+The Docker test uses the Binder environment, including Python 3.14.4. Live browser verification additionally checks upload, editable settings, the rendered figure gallery and ZIP download. These are distinct checks: an HTTP success response alone does not establish that gallery images render. Artificial-data success validates the workflow, not agreement with empirical study results; numerical comparison with authorized study data is performed locally.
 
 ## Local checks
 
@@ -20,17 +20,16 @@ python run.py verify-only
 python ci/check_release.py
 python -m unittest discover -s tests -v
 python ci/check_references.py
-python ci/execute_notebook.py --output-dir /tmp/tscs-aggregate-check
+python ci/execute_notebook.py --mode aggregate --output-dir /tmp/tscs-aggregate-check
 python run.py demo --output-dir /tmp/tscs-demo-check
 python ci/execute_notebook.py \
   --mode survey \
   --data-file /tmp/tscs-demo-check/survey.sav \
-  --profile-file /tmp/tscs-demo-check/profile.json \
   --calibration-file /tmp/tscs-demo-check/calibration.json \
   --output-dir /tmp/tscs-survey-check
 ```
 
-Use unused directories and supply `--font` if necessary. Validate any new official input against its codebook, sampling design and existing results. The fixed correction families remain 141 and 266, including 98/84/84 proportion contrasts across all adults and the two area groups.
+Use unused directories and supply `--font` if necessary. This example can use the generated profile beside the SAV. To specifically test metadata-only setup, copy only the artificial SAV into an otherwise empty `data/official/` directory, leave the Notebook's input settings blank, and run all cells. Validate any new official input against its codebook, sampling design and existing results. The fixed correction families remain 141 and 266, including 98/84/84 proportion contrasts across all adults and the two area groups.
 
 ## Release maintenance
 

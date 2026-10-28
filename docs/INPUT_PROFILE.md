@@ -1,20 +1,41 @@
-# Configure your official survey file
+# Input setup and advanced configuration
 
-The software reads an SPSS `.sav` file and a local JSON profile that connects its variables and value codes to the analysis. The distributed code does not contain a mapping for an unreleased survey file. Use the questionnaire, coding instructions and sampling documentation supplied with your official release.
+Start with [the Notebook's upload-and-run workflow](NOTEBOOK.md). With a single SAV in `data/official/`, leave `DATA_FILE` and `PROFILE_FILE` blank. The program first looks for a completed `profile.json` or a profile named after the SAV, such as `survey.profile.json`, beside the input. Otherwise it uses the file's labels and metadata to identify the analysis inputs. It checks the resulting mapping before analysis. If both profile names are present, select one explicitly with `PROFILE_FILE`.
 
-## Create the profile
+Use this guide when setup asks for confirmation or you want to supply a mapping explicitly. A profile connects your release's variables and value codes to the analysis. No mapping for an unreleased file is distributed. Confirm any unresolved inputs from the codebook and sampling documentation supplied with your official release.
 
-After uploading your official file into Binder's `data/official/` folder, open a terminal and run:
+## If automatic setup needs confirmation
+
+The error names the unresolved inputs and gives paths to a profile draft and metadata catalogue beside your SAV. Existing files are preserved. The catalogue lists column labels, response codes and missing-value definitions from **your file**, without respondent rows.
+
+For a small correction, update `INPUT_OVERRIDES` in the Notebook's settings cell. This artificial example chooses the photography column:
+
+```python
+INPUT_OVERRIDES = {
+    "columns": {"photography": "demo_photo"}
+}
+```
+
+Replace the example with a column from your file. Overrides use the profile's structure: `columns`, `value_maps`, `missing_values` and `design`. They are local settings; do not commit personal mappings or outputs. Rerun the settings cell and all following cells after making a correction.
+
+For several changes, open the generated profile draft from JupyterLab's file browser: **right-click → Open With → Editor**. Double-clicking a JSON file may open the read-only tree viewer instead. Complete the unresolved entries, save the file, and set `PROFILE_FILE` to the draft's full path shown by setup. Use the metadata catalogue and official documentation together; the remaining sections explain the profile's fields.
+
+After validation, keep that profile with your local copy of the release. Select it explicitly on later runs, or save a copy as `profile.json` beside the SAV for automatic selection. Download the profile separately from JupyterLab before a Binder session ends; it is intentionally excluded from the results ZIP. Recheck the mapping when switching releases.
+
+## Create a profile manually
+
+This is an alternative to automatic setup. In Binder, open **File → New → Terminal** and run the commands below. The first command matters: a Terminal may open inside the folder selected in the file browser.
 
 ```bash
+cd /home/jovyan
 python run.py inspect \
   --data-file /home/jovyan/data/official/survey.sav \
   --output-profile /home/jovyan/data/official/profile.json
 ```
 
-The command creates `profile.json` and `profile-metadata.json` in that folder. The metadata catalogue lists the names, labels, response codes and missing-value ranges from **your uploaded file**, with no respondent rows. Open these JSON files in JupyterLab, fill the empty entries in `profile.json`, and save it. They are local configuration files, not result downloads.
+Use your uploaded SAV's actual filename. The command creates `profile.json` and `profile-metadata.json` in that folder. If those files already exist, choose new output names. Open the profile using **Open With → Editor**, fill its empty entries, review the response maps, and save it. Set `PROFILE_FILE` in the Notebook to the completed profile's path. These local configuration files are excluded from result downloads.
 
-For local use, replace the paths with e.g. `~/Documents/TSCS/data/official/survey.sav` and `~/Documents/TSCS/data/official/profile.json`. Filenames are examples: use the actual name of your downloaded file.
+For local use, run from the repository root and replace the paths with, for example, `"$HOME/Documents/TSCS/data/official/survey.sav"` and `"$HOME/Documents/TSCS/data/official/profile.json"`.
 
 ## Connect columns and responses
 
@@ -30,14 +51,14 @@ For local use, replace the paths with e.g. `~/Documents/TSCS/data/official/surve
 }
 ```
 
-This is an illustrative fragment; the generated profile contains all required roles. `value_maps` converts source response codes into the analysis categories below. Its initial identity maps are **templates to review**, not an assertion about your release. For example, if the source encodes a category as `10`, change its entry to `"10": 1`. An unlisted nonmissing response stops analysis.
+This is an illustrative fragment; the generated profile contains all required roles. `value_maps` converts source response codes into the analysis categories below. The manual `inspect` command starts with identity maps: these are **templates to review**, not an assertion about your release. For example, if the source encodes a category as `10`, change its entry to `"10": 1`. An unlisted nonmissing response stops analysis.
 
 | Role | Analysis categories |
 |---|---|
 | `photography`, `video_recording`, `sharing_with_contacts`, `sharing_with_unspecified_audiences` | 1 several times/day; 2 daily; 3 several times/week; 4 several times/month; 5 less often; 6 never |
 | Additional equipment responses | Photography: 7 phone cannot take photos, 8 no phone; video: 7 phone cannot record videos |
 | `personal_files` | 1 original device; 2 personal computer or hard disk; 3 other storage media or print; 4 cloud; 5 other; 6 does not produce files; 7 has not considered storage |
-| `age_group` | 1 age18–29; 2 age30–39; 3 age40–49; 4 age50–59; 5 age60–69; 6 age70+ |
+| `age_group` | 1 age 18–29; 2 age 30–39; 3 age 40–49; 4 age 50–59; 5 age 60–69; 6 age 70+ |
 | `education_group` | 1 elementary or below; 2 junior high; 3 senior high/vocational; 4 college or above |
 | `sex_group` | 1 male; 2 female |
 | `primary_weight`, `alternative_weight` | Positive numeric official final weights; main unequal-probability start and alternative unit start, respectively |
@@ -64,4 +85,4 @@ Set `CALIBRATION_FILE` to this file. If it is empty, the extra recalibration sce
 python run.py demo --output-dir /tmp/tscs-demo
 ```
 
-This creates a synthetic `survey.sav`, its complete `profile.json`, and synthetic `calibration.json`. Use these three files to practise upload and execution; they do not contain real respondents or reproduce the study's empirical findings. See [the Notebook guide](NOTEBOOK.md) for running and downloading results.
+This creates a synthetic `survey.sav`, its complete `profile.json`, and synthetic `calibration.json`. Uploading only the SAV tests automatic setup; supplying the two JSON files also exercises explicit profile selection and the extra calibration check. These files contain no real respondents. See [the Notebook guide](NOTEBOOK.md) for running and downloading results.

@@ -1,126 +1,131 @@
 # Binder and local Notebook guide
 
-The Notebook has two input modes:
+The normal workflow is **upload one SAV → run all cells → view or download results**. The Notebook checks the uploaded file before calculating anything.
 
 | Mode | Input | Result |
 |---|---|---|
+| `survey` (default) | Your official SAV | Newly calculated statistics and nine figures |
 | `aggregate` | The ten tables included in the repository | Checked tables and nine redrawn figures |
-| `survey` | Your SAV file and a release-specific mapping profile | Newly calculated statistics and nine figures drawn from them |
 
-Both modes offer a figure gallery and a downloadable ZIP. The ZIP contains figures and aggregate results only.
+Both modes provide a figure gallery and a ZIP containing figures and aggregate results only.
 
-## Open Binder
+## Run on Binder
 
-[Launch the Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb). Wait for JupyterLab to open. A commit or release tag can replace `main` in the link to select a specific code version.
+### 1. Obtain your file and open the Notebook
 
-For a preview of the supplied results, leave `MODE = "aggregate"` and run the cells in order with **Shift + Enter**. No survey file is needed.
+Download the official SAV through [TSCS or SRDA](DATA_ACCESS.md), and retain its codebook and citation information. Use Binder when the provider's terms permit cloud processing; otherwise use the same Notebook [locally](#run-on-your-computer).
 
-## Analyze a survey file
+[Launch the Binder Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb) and wait for JupyterLab to open. A commit or release tag can replace `main` in this link when you need a specific code version.
 
-### 1. Obtain and prepare the input
+### 2. Upload to `data/official/`
 
-Download the official release through the [provider's channels](DATA_ACCESS.md) and retain its codebook and citation information. A mapping profile connects that release's variables and response codes to the analysis. Create and complete it using the [input-profile guide](INPUT_PROFILE.md).
+In the left file browser, click the **home icon** to return to the repository root. Open **data**, then **official**. Click **Upload Files** and select your SAV. Wait until the upload completes. Leave its original filename unchanged.
 
-Keep the SAV and completed profile together. For example, on your computer:
+The absolute folder on Binder is `/home/jovyan/data/official/`. For example, a file named `survey.sav` will be at:
 
 ```text
-~/Documents/TSCS/data/official/survey.sav
-~/Documents/TSCS/data/official/profile.json
+/home/jovyan/data/official/survey.sav
 ```
 
-The filenames are examples; use the names of your own files. If you also have population targets for the additional recalibration check, prepare the target JSON described in the input-profile guide.
+Keep exactly one SAV in that folder for automatic selection. If there are several files, set `DATA_FILE` in the Notebook to the particular file you want to analyze.
 
-### 2. Upload to Binder, or use local files
+### 3. Run all cells
 
-On Binder, open `data`, then `official`, in JupyterLab's left file browser. Click **Upload Files** and select the SAV and completed profile from your computer. If supplied, upload the calibration-target JSON to the same folder. Uploading to the selected folder gives these example absolute paths:
+Return to the `reproduce.ipynb` tab and choose **Run → Run All Cells**. The default settings find the SAV automatically:
 
 ```python
-DATA_FILE = "/home/jovyan/data/official/survey.sav"
-PROFILE_FILE = "/home/jovyan/data/official/profile.json"
-CALIBRATION_FILE = ""  # Or "/home/jovyan/data/official/calibration.json"
+MODE = "survey"
+DATA_FILE = ""          # Find the single SAV in data/official/.
+PROFILE_FILE = ""       # Use profile.json beside it, or inspect its metadata.
+INPUT_OVERRIDES = {}    # Only needed if setup requests confirmation.
+CALIBRATION_FILE = ""   # Optional population targets for an extra check.
+OUTPUT_DIR = ""         # Create a fresh temporary output directory.
+FONT = ""              # Use the available default font.
 ```
 
-If the folder does not exist in an older image, use **New Folder** in the file browser to create `data/official` under `/home/jovyan` first. Check the current folder before uploading.
+No Terminal command is needed for the normal workflow. The setup output shows the selected file and how the analysis inputs were identified. Analysis starts only after required variables, response coding, grouping, weights and sampling design pass validation.
 
-Use the cloud workflow only for data you are permitted to process there. The same Notebook runs locally without uploading any files. This workflow does not send survey files to GitHub, depositar datasets or CI. Binder stores session files temporarily; see its [service documentation](https://docs.depositar.io/en/stable/user-guide/binder.html).
+The metadata must identify each required input unambiguously. Incomplete or ambiguous labels require a first-time confirmation: the Notebook stops with unresolved inputs and paths to a local profile draft and metadata catalogue. Follow [the input-profile guide](INPUT_PROFILE.md), then rerun from the settings cell. Once confirmed, save the profile to reuse with the same release. A missing or ambiguous input never causes the Notebook to substitute the bundled results.
 
-### 3. Edit the settings cell
+### 4. View and download your results
 
-For Binder:
+After calculation, the Notebook shows the source mode, nine figures and two links:
+
+- **View nine figures** opens a gallery with embedded images.
+- **Download figures and aggregates (ZIP)** downloads this run's figures and tables.
+
+Survey mode draws the **newly calculated tables from your SAV**. Aggregate mode draws the bundled estimates. The gallery and ZIP identify the mode used. After extracting the ZIP, open `index.html` to browse its figures offline.
+
+The setup output gives the full output-directory path. Survey CSVs are under `analysis/aggregates/`, and figures are under `figures/`. Browser download copies are placed in `notebooks/downloads/` so Jupyter can serve them. These generated files are excluded from Git.
+
+Download the ZIP before leaving Binder: session storage is temporary. Uploading a file here does not publish it as a GitHub file or a depositar dataset through this workflow. See [Binder service documentation](https://docs.depositar.io/en/stable/user-guide/binder.html) for the hosting environment.
+
+## Change settings when needed
+
+With one SAV in `data/official/`, blank input settings are enough when its metadata resolves all required inputs. To select files explicitly, edit the settings cell. For example:
 
 ```python
 MODE = "survey"
 DATA_FILE = "/home/jovyan/data/official/survey.sav"
 PROFILE_FILE = "/home/jovyan/data/official/profile.json"
+INPUT_OVERRIDES = {}
 CALIBRATION_FILE = ""
 OUTPUT_DIR = "/tmp/tscs-results/run-01"
 FONT = ""
 ```
 
-For a local run:
+Use the actual filenames you uploaded. `PROFILE_FILE` is only needed when selecting a completed profile explicitly; blank uses a `profile.json` beside the SAV or automatic metadata setup. A profile records the mapping from your release's columns and codes to the analysis. `INPUT_OVERRIDES` supplies individual corrections when setup requests them; see [input configuration](INPUT_PROFILE.md).
+
+`CALIBRATION_FILE` supplies official population targets for an additional recalibration check. Blank marks that extra scenario unavailable. The main analysis, comparison using the supplied alternative weight, and sampling-unit deletion checks remain distinct calculations.
+
+The output directory must be new and outside the repository. Choose `run-02` for another run, or leave `OUTPUT_DIR` blank to create a fresh directory automatically. After changing settings, rerun the settings cell and all following cells.
+
+To preview results without a SAV, change only:
+
+```python
+MODE = "aggregate"
+```
+
+## Run on your computer
+
+Install **Python 3.14.4**, matching the tested Binder environment. From the repository root:
+
+```bash
+python3.14 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-notebook.txt
+mkdir -p data/official
+jupyter lab notebooks/reproduce.ipynb
+```
+
+Upload the SAV to `data/official/` in your local JupyterLab and run all cells, just as on Binder. The file stays on your computer. Alternatively, use an existing local file:
 
 ```python
 MODE = "survey"
 DATA_FILE = "~/Documents/TSCS/data/official/survey.sav"
-PROFILE_FILE = "~/Documents/TSCS/data/official/profile.json"
+PROFILE_FILE = ""
+INPUT_OVERRIDES = {}
 CALIBRATION_FILE = ""
 OUTPUT_DIR = "~/Documents/TSCS/results/run-01"
 FONT = ""
 ```
 
-`~` means your home directory. `FONT` can remain blank on Binder. Locally, set it to an installed font if the default is unavailable. `CALIBRATION_FILE` supplies targets for the additional population recalibration check; leaving it blank marks that check unavailable, rather than substituting stored estimates.
+`~` means your home directory. Set `FONT` to an installed font if the default is unavailable. For command-line execution, see [local reproduction](REPLICATION.md).
 
-The output directory must be new and outside the repository. Use `run-02` for another run, or leave `OUTPUT_DIR` blank to create a fresh temporary directory. Existing inputs and results are preserved.
+## Practise without survey records
 
-### 4. Execute and check the results
-
-Run the settings cell and all subsequent cells. The confirmation cell shows the mode, selected input paths and output directory. Verify the paths before starting analysis. After changing a setting, rerun from the settings cell onward.
-
-Survey mode reads the selected file and computes the results; it does not copy the supplied statistical tables. Required inputs are checked before estimation. A failed calculation stops the workflow instead of producing a success download. Statistical failures and unavailable checks are recorded in the result tables.
-
-When the run completes, the Notebook shows the source mode, nine figures, and two links:
-
-- **View nine figures** opens the figure gallery.
-- **Download figures and aggregates (ZIP)** downloads this run's results.
-
-The main results are in the configured output directory. Survey-mode aggregate CSVs are under `analysis/aggregates/`; figures are under `figures/`. The download copies are in `notebooks/downloads/`, where Jupyter can serve them. Generated inputs and outputs are excluded from Git.
-
-## Install and run locally
-
-From the repository root:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-notebook.txt
-jupyter lab notebooks/reproduce.ipynb
-```
-
-To execute the Notebook from the command line:
-
-```bash
-python ci/execute_notebook.py \
-  --mode survey \
-  --data-file "$HOME/Documents/TSCS/data/official/survey.sav" \
-  --profile-file "$HOME/Documents/TSCS/data/official/profile.json" \
-  --output-dir "$HOME/Documents/TSCS/results/notebook-01" \
-  --timeout 3600
-```
-
-Add `--calibration-file` when supplying population targets, and `--font` if needed. Command-line options replace the settings only in the executed copy; the source Notebook stays unchanged. For the bundled aggregate preview, omit `--mode`, `--data-file` and `--profile-file`.
-
-## Test the upload workflow without survey records
-
-The demo generator creates artificial data and a matching profile. It is useful for learning the upload process and testing settings; its results are not study findings.
+The demo generator creates an artificial SAV and matching configuration files:
 
 ```bash
 python run.py demo --output-dir "$HOME/Documents/TSCS/demo-input"
 ```
 
-Upload the generated `survey.sav`, `profile.json` and `calibration.json` to Binder's `data/official` folder and use their paths in survey mode. The sample is generated by code and contains no real respondents.
+Upload only the generated `survey.sav` to an otherwise empty Binder `data/official/` folder and run all cells to test automatic setup. Its metadata identifies it as artificial. To exercise the additional calibration check too, upload `calibration.json` and set `CALIBRATION_FILE` to its path. The generated `profile.json` is also available for practising explicit profile selection.
 
-## Download contents
+These observations are generated by code. Their results demonstrate the workflow and are not study findings.
 
-The ZIP contains nine figures in PNG/PDF formats, plotting aggregates, ten statistical tables and reading information. Survey mode exports the newly calculated tables; aggregate mode exports the bundled tables. It excludes survey files, mapping profiles, respondent records, logs and input paths. After extraction, open `index.html` to browse the figures.
+## ZIP contents
 
-Download before leaving Binder because the service provides no persistent storage. Clear Notebook outputs and reset personal paths before contributing changes. CI uses artificial inputs and public aggregates, and runs only in public repositories; see [CI.md](CI.md).
+The ZIP contains nine figures in PNG/PDF formats, plotting aggregates, ten statistical tables and reading information. It excludes SAV files, mapping profiles, metadata catalogues, respondent records, logs and input paths.
+
+Statistical failures and unavailable checks appear in the result tables. A workflow error stops execution instead of offering a successful new download. Clear Notebook outputs and personal settings before contributing changes. [CI](CI.md) uses artificial inputs and public aggregates, and runs only in public repositories.

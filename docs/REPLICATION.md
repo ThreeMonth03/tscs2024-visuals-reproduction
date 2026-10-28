@@ -4,26 +4,44 @@ The package supports two operations: reestimate from a user-supplied official SA
 
 ## Set up
 
+Install **Python 3.14.4**, matching the tested Binder environment. Run these commands from the repository root:
+
 ```bash
-python3 -m venv .venv
+python3.14 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-notebook.txt
+mkdir -p data/official
 ```
 
-Obtain your data through [the official provider](DATA_ACCESS.md), and configure a local [input profile](INPUT_PROFILE.md). Keep data and output outside the repository.
+Obtain your data through [the official provider](DATA_ACCESS.md). For the simplest workflow, launch `jupyter lab notebooks/reproduce.ipynb`, upload one SAV to `data/official/`, and choose **Run → Run All Cells**. See [the Notebook guide](NOTEBOOK.md) for figure previews and ZIP downloads.
+
+The ignored `data/official/` directory is for local inputs; outputs must be outside the repository. You can also keep inputs outside the repository and select them by absolute path.
 
 ## Reestimate from your file
 
 ```bash
 python run.py reestimate \
   --data-file "$HOME/Documents/TSCS/data/official/survey.sav" \
-  --profile-file "$HOME/Documents/TSCS/data/official/profile.json" \
   --output-dir "$HOME/Documents/TSCS/results/run-01"
 ```
 
-Optionally add `--calibration-file` for the additional population-margin check, and `--font` for an installed font. Use a new output directory each time. Calculations preserve the defined outcomes, denominators, design-based variance, 141-test family and 266-contrast family; there is no automatic reduction of comparison scope when inputs are missing.
+The command uses `profile.json` beside the SAV when present; otherwise it attempts metadata-based setup. If the file is the only SAV in `data/official/`, you can also omit `--data-file`. Ambiguous inputs stop with a message explaining what needs confirmation. For an explicitly completed profile, add `--profile-file` with its path; see [input configuration](INPUT_PROFILE.md).
+
+Optionally add `--calibration-file` for the additional population-margin check, and `--font` for an installed font. Use a new output directory each time. Calculations preserve the defined outcomes, denominators, design-based variance, 141-test family and 266-contrast family; missing inputs do not silently reduce the comparison scope.
 
 The output contains newly estimated aggregate tables under `analysis/aggregates/`, nine figures under `figures/`, and local run receipts. The receipt records whether the additional calibration check was available. No cleaned respondent table is written. For the browser gallery and results ZIP, run the [Notebook](NOTEBOOK.md); its ZIP excludes inputs, profiles, metadata catalogues and logs.
+
+To execute the Notebook from the command line:
+
+```bash
+python ci/execute_notebook.py \
+  --mode survey \
+  --data-file "$HOME/Documents/TSCS/data/official/survey.sav" \
+  --output-dir "$HOME/Documents/TSCS/results/notebook-01" \
+  --timeout 3600
+```
+
+Command-line settings apply only to the executed copy. The source Notebook stays unchanged. Use `--mode aggregate` to execute it with the bundled results instead.
 
 ## Test the workflow with artificial data
 

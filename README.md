@@ -4,47 +4,37 @@
 
 **Original Chinese title:** 使用手機分享影像以及數位保存方式的世代差異分析
 
-This package analyses phone photography and video recording, sharing photos and videos, and personal digital file practices across age, education and area groups. It supports manual SPSS input for the 2024 Taiwan Social Change Survey (TSCS), Digital Society module, and includes the study's aggregate results for comparison and figure regeneration.
+This package analyses phone photography and video recording, sharing photos and videos, and personal digital file practices across age, education and area groups. It calculates results from a user-supplied SPSS file for the 2024 Taiwan Social Change Survey (TSCS), Digital Society module. The study's aggregate results are also included for comparison and figure regeneration.
 
 ## Choose your starting point
 
 | What you want to do | Start here |
 |---|---|
-| See the existing results without a survey file | Open the Notebook in `aggregate` mode; run all cells |
-| Recalculate from an official SAV you obtained | Upload the file, configure its input profile, select `survey` mode |
-| Practise the complete upload-to-results workflow | Generate the artificial demo files and run them in `survey` mode |
+| Recalculate from an official SAV you obtained | Upload one SAV to `data/official/`, then run all Notebook cells |
+| See the existing results without a survey file | Set `MODE = "aggregate"`, then run all cells |
+| Practise without survey records | Use the generated artificial SAV described in the [Notebook guide](docs/NOTEBOOK.md) |
 
-[Open the Binder Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb). The [Notebook guide](docs/NOTEBOOK.md) gives the exact upload folder, settings, figure preview and ZIP download steps. Download results before the temporary Binder session ends.
+[Open the Binder Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb). In JupyterLab's left file browser, click the **home icon**, open **data → official**, and upload your SAV. Return to the Notebook tab and choose **Run → Run All Cells**. The default `survey` mode finds the file and checks its metadata. At the bottom, view nine figures or download the results ZIP. Download before the temporary Binder session ends.
 
-## Manual data input
+## Your survey file
 
-Obtain the official SAV and its coding/sampling documentation from [TSCS or SRDA](docs/DATA_ACCESS.md). The software uses the historical public-release format as its working contract: labelled SPSS responses, documented demographic groups, sampling design, geographic labels and two official weights. Compatibility with the target release is checked when the official file is supplied. An input profile connects that file to the semantic analysis roles; no unreleased variable mapping is bundled.
+Obtain the official SAV and its documentation from [TSCS or SRDA](docs/DATA_ACCESS.md). Keep the original filename: no rename is required when `data/official/` contains exactly one SAV. With the default settings, the Notebook identifies the required variables and response categories from the file's metadata. Incomplete or ambiguous labels require a first-time confirmation; setup names what needs attention and stops before analysis. Once a release's mapping is confirmed, it can be reused with that release. The [Notebook guide](docs/NOTEBOOK.md) explains how.
 
-Locally:
+The software follows the documented structure of historical public releases. Compatibility with a particular release is verified from that release's file and codebook; no unreleased variable mapping is bundled. Calculations retain the fixed 141-test and 266-contrast correction families. An optional population-target file enables an additional calibration check. The main analysis, supplied alternative-weight comparison and sampling-unit deletion checks run without that target file.
+
+To run the same Notebook on your computer, install **Python 3.14.4**, then:
 
 ```bash
 git clone https://github.com/ThreeMonth03/tscs2024-visuals-reproduction.git
 cd tscs2024-visuals-reproduction
-python3 -m venv .venv
+python3.14 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-notebook.txt
-python run.py inspect \
-  --data-file "$HOME/Documents/TSCS/data/official/survey.sav" \
-  --output-profile "$HOME/Documents/TSCS/data/official/profile.json"
+mkdir -p data/official
+jupyter lab notebooks/reproduce.ipynb
 ```
 
-Complete the profile using the [input guide](docs/INPUT_PROFILE.md), then run:
-
-```bash
-python run.py reestimate \
-  --data-file "$HOME/Documents/TSCS/data/official/survey.sav" \
-  --profile-file "$HOME/Documents/TSCS/data/official/profile.json" \
-  --output-dir "$HOME/Documents/TSCS/results/run-01"
-```
-
-The run estimates new proportions, design-based uncertainty, hypothesis tests and sensitivity results. It retains the fixed 141-test and 266-contrast correction families. An additional population-margin calibration check accepts an optional local configuration file; without it that supplemental scenario is marked unavailable. The supplied alternative-weight comparison remains a separate calculation.
-
-To practise with artificial data, run `python run.py demo --output-dir /tmp/tscs-demo` and use the three generated files. To check existing aggregate results only, run `python run.py verify-only`; to redraw them, use `python run.py figures --output-dir /tmp/tscs-figures-01`.
+Upload to `data/official/` in your local JupyterLab, or set `DATA_FILE` to a file already on your computer. See [local execution](docs/REPLICATION.md) for command-line runs and [input profiles](docs/INPUT_PROFILE.md) for advanced configuration.
 
 ## Outputs and data boundaries
 
@@ -55,7 +45,7 @@ No respondent data are distributed or automatically downloaded. Follow the offic
 ## Documentation
 
 - [Notebook upload, settings, previews and downloads](docs/NOTEBOOK.md)
-- [Configure a local input profile](docs/INPUT_PROFILE.md)
+- [Resolve input mapping and advanced configuration](docs/INPUT_PROFILE.md)
 - [Local execution](docs/REPLICATION.md)
 - [Official sources and historical format evidence](docs/DATA_ACCESS.md)
 - [Automated checks](docs/CI.md)

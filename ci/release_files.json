@@ -31,6 +31,7 @@
     "helpers/survey_comparisons.json",
     "helpers/survey_demo.py",
     "helpers/survey_input.py",
+    "helpers/survey_setup.py",
     "helpers/survey_statistics.py",
     "notebooks/reproduce.ipynb",
     "reference_data/README.md",
@@ -47,6 +48,7 @@
     "tests/test_public_packaging.py",
     "tests/test_release.py",
     "tests/test_survey_analysis.py",
-    "tests/test_survey_input.py"
+    "tests/test_survey_input.py",
+    "tests/test_survey_setup.py"
   ]
 }

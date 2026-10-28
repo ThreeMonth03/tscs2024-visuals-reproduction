@@ -63,6 +63,7 @@ def apply_cli_settings(notebook: dict, env: dict[str, str]) -> None:
         f"CALIBRATION_FILE = {env.get('REPRO_CALIBRATION_FILE', '')!r}\n"
         f"OUTPUT_DIR = {env['REPRO_OUTPUT_DIR']!r}\n"
         f"FONT = {env.get('REPRO_FONT', '')!r}\n"
+        "INPUT_OVERRIDES = {}\n"
     )
 
 

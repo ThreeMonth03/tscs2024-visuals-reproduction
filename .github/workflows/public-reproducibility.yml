@@ -95,8 +95,8 @@ jobs:
           docker run --rm \
             --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
             tscs-binder \
-            bash -c 'python run.py demo --output-dir /tmp/demo-input && python ci/execute_notebook.py --mode survey --data-file /tmp/demo-input/survey.sav --profile-file /tmp/demo-input/profile.json --calibration-file /tmp/demo-input/calibration.json --output-dir /tmp/notebook-output/survey-run'
-          echo 'Binder image built; aggregate and manual-input notebooks executed. Manual input used artificial observations only.' >> "$GITHUB_STEP_SUMMARY"
+            bash -c 'python run.py demo --output-dir /tmp/demo-input && cp /tmp/demo-input/survey.sav data/official/uploaded.sav && python ci/execute_notebook.py --mode survey --calibration-file /tmp/demo-input/calibration.json --output-dir /tmp/notebook-output/survey-run'
+          echo 'Binder image built; aggregate and SAV-only notebooks executed. Automatic input setup used artificial observations only, with no supplied mapping profile.' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload public notebook receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

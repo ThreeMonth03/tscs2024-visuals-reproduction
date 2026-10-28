@@ -1,7 +1,7 @@
 """Run an aggregate preview or reestimate from a user-selected survey file."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 import csv
 import hashlib
 import json
@@ -23,6 +23,7 @@ class Configuration:
     data_file: Path | None = None
     profile_file: Path | None = None
     calibration_file: Path | None = None
+    input_overrides: dict = field(default_factory=dict)
 
 
 def find_root(start: Path | None = None) -> Path:
@@ -81,9 +82,11 @@ def run_workflow(root: Path, config: Configuration) -> dict:
     if config.mode not in {"aggregate", "survey"}:
         raise ValueError("MODE must be 'aggregate' or 'survey'")
     if config.mode == "survey":
-        for label, path in (("DATA_FILE", config.data_file), ("PROFILE_FILE", config.profile_file)):
-            if path is None or not path.is_file():
-                raise FileNotFoundError(f"Set {label} to an existing uploaded or local file")
+        from helpers.survey_setup import prepare_upload
+        prepared = prepare_upload(root, data_file=config.data_file,
+                                  profile_file=config.profile_file,
+                                  overrides=config.input_overrides)
+        config = replace(config, data_file=prepared.data_file, profile_file=prepared.profile_file)
         if config.calibration_file is not None and not config.calibration_file.is_file():
             raise FileNotFoundError("Set CALIBRATION_FILE to an existing file, or leave it blank")
     if output == root or output.is_relative_to(root):
