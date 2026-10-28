@@ -15,8 +15,28 @@ class PublicPackagingTests(unittest.TestCase):
         self.assertEqual(jobs[1::2], ['aggregate-checks', 'binder-notebook'])
         for name, block in zip(jobs[1::2], jobs[2::2], strict=True):
             with self.subTest(job=name):
-                self.assertIn('if: ${{ github.event.repository.private == false }}', block)
+                condition = re.search(r'^    if: (.*)$', block, re.M).group(1)
+                self.assertTrue(condition.startswith('${{ github.event.repository.private == false'))
+                self.assertNotIn('||', condition)
                 self.assertLess(block.index('if:'), block.index('runs-on:'))
+
+    def test_basic_checks_always_run_and_notebook_uses_change_decision(self):
+        workflow = (ROOT / '.github/workflows/public-reproducibility.yml').read_text()
+        events, jobs = workflow.split('jobs:\n', 1)
+        self.assertIn('workflow_dispatch:', events)
+        self.assertNotIn('paths:', events)
+        self.assertNotIn('paths-ignore:', events)
+        basic, notebook = jobs.split('  binder-notebook:', 1)
+        self.assertIn('if: ${{ github.event.repository.private == false }}', basic)
+        self.assertIn('fetch-depth: 0', basic)
+        self.assertIn('id: notebook-changes', basic)
+        self.assertIn('run: python ci/notebook_changes.py', basic)
+        self.assertIn('run_notebook: ${{ steps.notebook-changes.outputs.run_notebook }}', basic)
+        self.assertIn('needs: aggregate-checks', notebook)
+        self.assertIn("needs.aggregate-checks.outputs.run_notebook == 'true'", notebook)
+        # The cloud pipeline accepts no respondent-data input or download URL.
+        self.assertIn('python run.py demo --output-dir /tmp/demo-input', notebook)
+        self.assertIn('cp /tmp/demo-input/survey.sav data/official/uploaded.sav', notebook)
 
     def test_cli_exposes_explicit_manual_input_operations(self):
         result = subprocess.run([sys.executable, ROOT / 'run.py', '--help'],

@@ -1,4 +1,4 @@
-name: Public survey workflow and aggregate checks
+name: Software and public aggregate checks
 
 on:
   push:
@@ -15,18 +15,24 @@ concurrency:
 
 jobs:
   aggregate-checks:
-    name: Verify aggregates and regenerate 9 figures
+    name: Check software and public aggregate results
     # Evaluated before a runner is allocated. Private forks do not consume minutes.
     if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    outputs:
+      run_notebook: ${{ steps.notebook-changes.outputs.run_notebook }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.14.4'
+      - name: Decide whether the full Notebook test is needed
+        id: notebook-changes
+        run: python ci/notebook_changes.py
       - name: Check reviewed public file inventory
         run: python ci/check_release.py
       - name: Install analysis and notebook runtime
@@ -50,14 +56,14 @@ jobs:
       - name: Describe completed checks
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
-          ## Completed public checks
+          ## Software and public aggregate checks
 
           - Reviewed file inventory, private-data format checks and validator regression tests.
           - Aggregate table hashes, reference licenses and Python syntax.
           - BY141/BY266 corrections, fixed comparison counts and sensitivity flags from aggregate result tables.
           - Nine figures regenerated from archived aggregate profiles (258 selected rows).
 
-          These checks validate existing aggregates and software behavior. The Binder job additionally estimates statistics from generated artificial observations. No actual respondent data are downloaded, used or uploaded.
+          These checks validate existing aggregates and software behavior; they do not reestimate the study from respondent data. When selected, the full Notebook job calculates new results from artificial observations only. No actual respondent data are downloaded, used or uploaded. Its run/skip reason appears above.
           EOF
       - name: Upload aggregate verification and figures
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -73,9 +79,9 @@ jobs:
           retention-days: 14
 
   binder-notebook:
-    name: Build Binder image and execute public notebook
+    name: Test Notebook with artificial survey data
     needs: aggregate-checks
-    if: ${{ github.event.repository.private == false }}
+    if: ${{ github.event.repository.private == false && needs.aggregate-checks.outputs.run_notebook == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
