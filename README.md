@@ -6,6 +6,8 @@
 
 This package analyses phone photography and video recording, sharing photos and videos, and personal digital file practices across age, education and area groups. It calculates results from a user-supplied SPSS file for the 2024 Taiwan Social Change Survey (TSCS), Digital Society module. The study's aggregate results are also included for comparison and figure regeneration.
 
+The fixed research archive is available on [depositar (ark:37281/k5j350466)](https://pid.depositar.io/ark:37281/k5j350466), including a recorded code version, aggregate tables, figures and appendices. This repository maintains the software; the archive identifies the version it preserves. See [provenance and archive contents](docs/PROVENANCE.md).
+
 ## Choose your starting point
 
 | What you want to do | Start here |
@@ -22,7 +24,7 @@ Obtain the official SAV and its documentation from [TSCS or SRDA](docs/DATA_ACCE
 
 The software follows the documented structure of historical public releases. Compatibility with a particular release is verified from that release's file and codebook; no unreleased variable mapping is bundled. Calculations retain the fixed 141-test and 266-contrast correction families. An optional population-target file enables an additional calibration check. The main analysis, supplied alternative-weight comparison and sampling-unit deletion checks run without that target file.
 
-To run the same Notebook on your computer, install **Python 3.14.4**, then:
+To run the same Notebook on your computer, install **Python 3.14.4**. On macOS or Linux:
 
 ```bash
 git clone https://github.com/ThreeMonth03/tscs2024-visuals-reproduction.git
@@ -34,7 +36,7 @@ mkdir -p data/official
 jupyter lab notebooks/reproduce.ipynb
 ```
 
-Upload to `data/official/` in your local JupyterLab, or set `DATA_FILE` to a file already on your computer. See [local execution](docs/REPLICATION.md) for command-line runs and [input profiles](docs/INPUT_PROFILE.md) for advanced configuration.
+Upload to `data/official/` in your local JupyterLab, or set `DATA_FILE` to a file already on your computer. Local plots use Matplotlib's bundled DejaVu Sans when Binder's Noto font is unavailable; no separate font installation is needed. See [local execution](docs/REPLICATION.md) for Windows setup and command-line runs, and [input profiles](docs/INPUT_PROFILE.md) for advanced configuration.
 
 ## Outputs and data boundaries
 

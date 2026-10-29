@@ -39,3 +39,9 @@ The operations above describe aggregate mode. Survey mode reads a user-supplied 
 The interface and figure labels use English. The original Chinese study title and official reference titles remain as bibliographic information. The [terminology guide](TERMINOLOGY.md) explains the outcome definitions, comparison groups, and denominators used by the figures.
 
 Record the package commit or release when citing a result or sharing a Binder link. Generated files identify their aggregate source; software and font differences can affect rendering without changing the plotted values.
+
+## Fixed research archive
+
+[depositar, ark:37281/k5j350466](https://pid.depositar.io/ark:37281/k5j350466), preserves a recorded code snapshot, the ten aggregate tables, nine figures and supplementary appendices, with an index and file checksums. The archive's metadata and included manifest identify its version. GitHub may contain later software or documentation changes, so cite the commit used for a new run and the archive identifier for the preserved materials.
+
+The archive can check the stored summaries and regenerate figures without respondent records. Reestimating from individual observations requires an official SAV obtained by the user, with its mapping and available inputs checked against that release's documentation. Neither the archive nor successful artificial-data tests establish agreement with an official release that has not yet been tested. Rights remain separated by component as described in [RIGHTS.md](../RIGHTS.md) and the archive's rights statement.

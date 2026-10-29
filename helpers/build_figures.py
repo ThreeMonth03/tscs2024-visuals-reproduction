@@ -148,7 +148,7 @@ def configure_font(requested: str, font_manager) -> tuple[str, Path]:
         try:
             font_path = Path(font_manager.findfont(font_manager.FontProperties(family=[family]), fallback_to_default=False)).resolve()
         except ValueError as exc:
-            raise ValueError("Requested font family is unavailable; supply a CJK font file: " + family) from exc
+            raise ValueError("Requested font family is unavailable; supply an installed font family or font file: " + family) from exc
     return family, font_path
 
 def axes_format(ax, factor, ylabel="加權比例（%）"):
@@ -366,7 +366,7 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True,
                         help="New directory for nine PDF/PNG figures and provenance")
     parser.add_argument("--font", required=True,
-                        help="CJK font file (.otf/.ttf/.ttc) or installed family")
+                        help="Font file (.otf/.ttf/.ttc) or installed family")
     args = parser.parse_args()
     report = build(args.results_root, args.output_dir, args.font)
     print(json.dumps({key: report[key] for key in (

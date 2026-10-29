@@ -8,6 +8,7 @@ from pathlib import Path
 
 from ci.check_aggregates import validate as check_aggregates
 from ci.check_references import validate as check_references
+from helpers.notebook_workflow import default_font
 
 ROOT = Path(__file__).resolve().parent
 
@@ -24,7 +25,7 @@ def main() -> None:
     commands.add_parser("verify-only", help="Check tables, BY adjustments, sensitivity summaries and references")
     figures = commands.add_parser("figures", help="Verify the aggregates and redraw nine figures")
     figures.add_argument("--output-dir", type=Path, required=True)
-    figures.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
+    figures.add_argument("--font", default=default_font())
     inspect = commands.add_parser("inspect", help="Create a local input profile and metadata catalogue")
     inspect.add_argument("--data-file", type=Path, required=True)
     inspect.add_argument("--output-profile", type=Path, required=True)
@@ -37,7 +38,7 @@ def main() -> None:
                         help="Optional confirmed mapping; omitted uses SAV metadata")
     survey.add_argument("--calibration-file", type=Path)
     survey.add_argument("--output-dir", type=Path, required=True)
-    survey.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
+    survey.add_argument("--font", default=default_font())
     args = parser.parse_args()
     if args.command == "inspect":
         from helpers.survey_input import inspect_survey

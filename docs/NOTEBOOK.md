@@ -88,7 +88,7 @@ MODE = "aggregate"
 
 ## Run on your computer
 
-Install **Python 3.14.4**, matching the tested Binder environment. From the repository root:
+Install **Python 3.14.4**, matching the tested Binder environment. Use the [local setup guide](REPLICATION.md#set-up) to obtain the repository or follow the Windows commands. On macOS or Linux, run from the repository root:
 
 ```bash
 python3.14 -m venv .venv
@@ -110,7 +110,7 @@ OUTPUT_DIR = "~/Documents/TSCS/results/run-01"
 FONT = ""
 ```
 
-`~` means your home directory. Set `FONT` to an installed font if the default is unavailable. For command-line execution, see [local reproduction](REPLICATION.md).
+`~` means your home directory. Leave `FONT` blank to use Binder's installed Noto font or Matplotlib's bundled DejaVu Sans on other systems. To choose a font yourself, supply an installed family name or font-file path. For command-line execution, see [local reproduction](REPLICATION.md).
 
 ## Practise without survey records
 

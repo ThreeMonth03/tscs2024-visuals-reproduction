@@ -15,6 +15,11 @@ import tempfile
 DEFAULT_FONT = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
 
 
+def default_font() -> str:
+    """Keep Binder's font and use Matplotlib's bundled font on other systems."""
+    return DEFAULT_FONT if Path(DEFAULT_FONT).is_file() else "DejaVu Sans"
+
+
 @dataclass(frozen=True)
 class Configuration:
     output_dir: Path
@@ -45,7 +50,7 @@ def configuration(environ: dict[str, str] | None = None) -> Configuration:
     def input_path(name: str) -> Path | None:
         value = env.get(name)
         return Path(value).expanduser().resolve() if value else None
-    return Configuration(output_dir=output_dir, font=env.get("REPRO_FONT") or DEFAULT_FONT,
+    return Configuration(output_dir=output_dir, font=env.get("REPRO_FONT") or default_font(),
                          mode=mode, data_file=input_path("REPRO_DATA_FILE"),
                          profile_file=input_path("REPRO_PROFILE_FILE"),
                          calibration_file=input_path("REPRO_CALIBRATION_FILE"))

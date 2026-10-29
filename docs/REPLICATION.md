@@ -4,7 +4,7 @@ The package supports two operations: reestimate from a user-supplied official SA
 
 ## Set up
 
-Install **Python 3.14.4**, matching the tested Binder environment. Run these commands from the repository root:
+Install **Python 3.14.4**, matching the tested Binder environment. Obtain the source with `git clone https://github.com/ThreeMonth03/tscs2024-visuals-reproduction.git`, then enter its folder with `cd tscs2024-visuals-reproduction`. On macOS or Linux:
 
 ```bash
 python3.14 -m venv .venv
@@ -12,6 +12,19 @@ source .venv/bin/activate
 python -m pip install -r requirements-notebook.txt
 mkdir -p data/official
 ```
+
+On Windows, use PowerShell:
+
+```powershell
+py -3.14 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebook.txt
+New-Item -ItemType Directory -Force data/official
+.\.venv\Scripts\jupyter.exe lab notebooks/reproduce.ipynb
+```
+
+No PowerShell activation is required. For the commands below, replace `python` with `.\.venv\Scripts\python.exe` and use your own file paths; enter commands on one line instead of using the Bash `\` line continuations. Use `$env:USERPROFILE` in place of `$HOME` when constructing Windows paths.
+
+Binder uses its installed Noto font. On other systems, the default falls back to Matplotlib's bundled DejaVu Sans, which covers the English figure labels. To choose another installed font, set `FONT` in the Notebook or pass `--font` as a family name or font-file path. A missing explicitly selected font stops plotting rather than silently changing the selection.
 
 Obtain your data through [the official provider](DATA_ACCESS.md). For the simplest workflow, launch `jupyter lab notebooks/reproduce.ipynb`, upload one SAV to `data/official/`, and choose **Run → Run All Cells**. See [the Notebook guide](NOTEBOOK.md) for figure previews and ZIP downloads.
 

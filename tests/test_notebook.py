@@ -79,7 +79,20 @@ class NotebookTests(unittest.TestCase):
         with patch.object(workflow.tempfile, "mkdtemp", return_value=str(self.output.parent)):
             config = workflow.configuration({"REPRO_OUTPUT_DIR": "", "REPRO_FONT": ""})
         self.assertEqual(config.output_dir, self.output)
+        self.assertEqual(config.font, workflow.default_font())
+
+    def test_local_default_does_not_require_binders_linux_font(self):
+        with patch.object(workflow.Path, "is_file", return_value=False):
+            config = workflow.configuration({"REPRO_OUTPUT_DIR": str(self.output)})
+        self.assertEqual(config.font, "DejaVu Sans")
+
+    def test_binder_font_and_explicit_selection_are_preserved(self):
+        with patch.object(workflow.Path, "is_file", return_value=True):
+            config = workflow.configuration({"REPRO_OUTPUT_DIR": str(self.output)})
+            explicit = workflow.configuration({"REPRO_OUTPUT_DIR": str(self.output),
+                                               "REPRO_FONT": "chosen-font"})
         self.assertEqual(config.font, workflow.DEFAULT_FONT)
+        self.assertEqual(explicit.font, "chosen-font")
 
     def test_cli_settings_override_only_executed_copy(self):
         notebook = json.loads((ROOT / "notebooks/reproduce.ipynb").read_text())
