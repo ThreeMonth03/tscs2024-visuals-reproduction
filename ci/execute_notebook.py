@@ -73,6 +73,7 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--font")
     parser.add_argument("--mode", choices=["aggregate", "survey"], default="aggregate")
+    parser.add_argument("--notebook", choices=["reproduce", "demo"], default="reproduce")
     parser.add_argument("--data-file", type=Path)
     parser.add_argument("--profile-file", type=Path)
     parser.add_argument("--calibration-file", type=Path)
@@ -86,17 +87,26 @@ def main() -> None:
         parser.error("--output-dir already exists; previous results are preserved")
     if args.timeout < 1:
         parser.error("--timeout must be positive")
+    if args.notebook == "demo" and args.mode != "aggregate":
+        parser.error("The demo only uses public aggregates; use reproduce for survey mode")
 
     import nbformat
     from nbclient import NotebookClient
     from jupyter_client import KernelManager
     from jupyter_client.kernelspec import KernelSpecManager
 
-    notebook = nbformat.read(root / "notebooks/reproduce.ipynb", as_version=4)
+    notebook = nbformat.read(root / f"notebooks/{args.notebook}.ipynb", as_version=4)
     nbformat.validate(notebook)
     check_notebook_links(root, notebook)
-    if any(cell.get("outputs") or cell.get("execution_count") is not None
-           for cell in notebook.cells if cell.cell_type == "code"):
+    if args.notebook == "demo":
+        from prepare_binder_demo import validate_preview
+        validate_preview(notebook, root)
+        for cell in notebook.cells:
+            if cell.cell_type == "code":
+                cell.outputs, cell.execution_count = [], None
+        notebook.metadata.pop("aggregate_preview")
+    elif any(cell.get("outputs") or cell.get("execution_count") is not None
+             for cell in notebook.cells if cell.cell_type == "code"):
         raise ValueError("The committed notebook must have empty outputs and execution counts")
     env = execution_environment(args, output, dict(os.environ))
     apply_cli_settings(notebook, env)

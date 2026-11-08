@@ -1,15 +1,19 @@
 # Binder and local Notebook guide
 
-The normal workflow is **upload one SAV → run all cells → view or download results**. The Notebook checks the uploaded file before calculating anything.
+To view the published results immediately, [open the Binder demo](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Fdemo.ipynb). It already displays nine figures drawn from the published aggregate tables. No upload or cell execution is needed to see the figures.
+
+Choose **Run → Run All Cells** in the demo to verify the tables, redraw the figures and create a results ZIP. The demo uses `aggregate` mode; it does not recalculate survey statistics from respondent records. Its saved previews are generated while building the Binder image. Notebook sources in Git retain empty outputs.
+
+For new estimates from your own SAV, use `reproduce.ipynb`: **upload one SAV → run all cells → view or download results**. This Notebook checks the uploaded file before calculating anything and still defaults to `survey` mode.
 
 | Mode | Input | Result |
 |---|---|---|
-| `survey` (default) | Your official SAV | Newly calculated statistics and nine figures |
-| `aggregate` | The ten tables included in the repository | Checked tables and nine redrawn figures |
+| `survey` (default in `reproduce.ipynb`) | Your official SAV | Newly calculated statistics and nine figures |
+| `aggregate` (used by `demo.ipynb`) | The ten tables included in the repository | Checked tables and nine redrawn figures |
 
 Both modes provide a figure gallery and a ZIP containing figures and aggregate results only.
 
-## Run on Binder
+## Recalculate from a SAV on Binder
 
 ### 1. Obtain your file and open the Notebook
 

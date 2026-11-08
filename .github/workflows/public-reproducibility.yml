@@ -90,10 +90,14 @@ jobs:
           persist-credentials: false
       - name: Build the same fixed image used by Binder
         run: docker build --file .binder/Dockerfile --tag tscs-binder .
-      - name: Execute aggregate and artificial-input notebooks
+      - name: Check the saved demo and execute aggregate and artificial-input notebooks
         run: |
           mkdir -p "$RUNNER_TEMP/notebook-output"
           chmod 777 "$RUNNER_TEMP/notebook-output"
+          docker run --rm \
+            --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
+            tscs-binder \
+            python ci/execute_notebook.py --notebook demo --output-dir /tmp/notebook-output/demo-run
           docker run --rm \
             --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
             tscs-binder \
@@ -102,7 +106,7 @@ jobs:
             --mount "type=bind,src=$RUNNER_TEMP/notebook-output,dst=/tmp/notebook-output" \
             tscs-binder \
             bash -c 'python run.py demo --output-dir /tmp/demo-input && cp /tmp/demo-input/survey.sav data/official/uploaded.sav && python ci/execute_notebook.py --mode survey --calibration-file /tmp/demo-input/calibration.json --output-dir /tmp/notebook-output/survey-run'
-          echo 'Binder image built; aggregate and SAV-only notebooks executed. Automatic input setup used artificial observations only, with no supplied mapping profile.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Binder image built; nine saved demo figures checked, then demo, aggregate and SAV-only notebooks executed from cleared outputs. Automatic input setup used artificial observations only, with no supplied mapping profile.' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload public notebook receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -111,6 +115,7 @@ jobs:
             ${{ runner.temp }}/notebook-output/run/*.json
             ${{ runner.temp }}/notebook-output/run/*.ipynb
             ${{ runner.temp }}/notebook-output/run/run/notebook_report.json
+            ${{ runner.temp }}/notebook-output/demo-run/run/notebook_report.json
             ${{ runner.temp }}/notebook-output/survey-run/*.json
             ${{ runner.temp }}/notebook-output/survey-run/run/notebook_report.json
           if-no-files-found: error

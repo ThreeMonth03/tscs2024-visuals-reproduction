@@ -9,7 +9,7 @@ The [workflow](../.github/workflows/public-reproducibility.yml) starts on pushes
 | Job | When it runs | What it checks |
 |---|---|---|
 | `aggregate-checks` | Every workflow run | Reviewed public file inventory, unit tests, ten aggregate tables, BY corrections, sensitivity summaries, reference rights and regeneration of nine selected figures |
-| `binder-notebook` | Relevant runtime changes or a manual run | Builds the Binder image and executes the Notebook in aggregate mode and with an artificial SAV, including automatic input setup, fresh statistical estimates, nine figures and the results ZIP |
+| `binder-notebook` | Relevant runtime changes or a manual run | Builds the Binder image, checks the saved demo previews, then executes the demo with cleared outputs and the reproduction Notebook with an artificial SAV, including automatic input setup, fresh statistical estimates, nine figures and the results ZIP |
 
 The full Notebook test runs when changes affect:
 
@@ -27,6 +27,8 @@ To request a full check yourself, open the repository's **Actions** tab, select 
 The aggregate checks verify the existing tables and redraw figures from stored estimates. They do not recalculate empirical proportions, standard errors or hypothesis tests from a SAV. The nine figures show the selected study results; additional comparisons and sensitivity results remain in the CSV tables.
 
 The full Notebook test calculates new results from artificial observations. It checks that input setup, analysis, plotting and export work together in the Binder environment. Agreement with a particular official survey release must be checked separately after obtaining that release and confirming its input mapping.
+
+The Binder image also contains `demo.ipynb`, with nine previews generated from the verified public aggregate tables during the image build. CI checks those saved previews and clears them before executing the demo again, so existing images cannot stand in for a successful run. Git retains Notebook sources with empty outputs; the generated demo does not include survey inputs, profiles or execution logs.
 
 The Docker test uses Python 3.14.4. Live browser verification separately checks the upload interface, rendered gallery and ZIP download; the CI Docker test does not operate a browser.
 

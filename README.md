@@ -12,11 +12,14 @@ The fixed research archive is available on [depositar (ark:37281/k5j350466)](htt
 
 | What you want to do | Start here |
 |---|---|
+| View nine figures immediately, without uploading data | [Open the Binder demo](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Fdemo.ipynb) |
 | Recalculate from an official SAV you obtained | Upload one SAV to `data/official/`, then run all Notebook cells |
-| See the existing results without a survey file | Set `MODE = "aggregate"`, then run all cells |
+| Redraw the existing results and download a ZIP | Choose **Run → Run All Cells** in the demo, or use `MODE = "aggregate"` in the reproduction Notebook |
 | Practise without survey records | Use the generated artificial SAV described in the [Notebook guide](docs/NOTEBOOK.md) |
 
-[Open the Binder Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb). In JupyterLab's left file browser, click the **home icon**, open **data → official**, and upload your SAV. Return to the Notebook tab and choose **Run → Run All Cells**. The default `survey` mode finds the file and checks its metadata. At the bottom, view nine figures or download the results ZIP. Download before the temporary Binder session ends.
+The demo opens with nine figures already drawn from the published aggregate tables; no upload or cell execution is needed to view them. **Run → Run All Cells** verifies the tables, redraws the figures and creates a downloadable ZIP. This does not reestimate statistics from respondent records.
+
+To analyze a SAV, [open the reproduction Notebook](https://binder.depositar.io/v2/gh/ThreeMonth03/tscs2024-visuals-reproduction/main?urlpath=lab%2Ftree%2Fnotebooks%2Freproduce.ipynb). In JupyterLab's left file browser, click the **home icon**, open **data → official**, and upload your SAV. Return to the Notebook tab and choose **Run → Run All Cells**. Its default `survey` mode finds the file and checks its metadata. At the bottom, view nine figures or download the results ZIP. Download before the temporary Binder session ends.
 
 ## Your survey file
 

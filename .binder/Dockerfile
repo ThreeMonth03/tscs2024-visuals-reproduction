@@ -33,4 +33,6 @@ COPY --chown=1000:1000 reference_data/ ./reference_data/
 COPY --chown=1000:1000 notebooks/ ./notebooks/
 RUN mkdir -p /home/jovyan/data/official && chown -R 1000:1000 /home/jovyan/data
 USER 1000
+# Only public aggregates are used. Git keeps both Notebook sources output-free.
+RUN python ci/prepare_binder_demo.py --output notebooks/demo.ipynb
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser"]
