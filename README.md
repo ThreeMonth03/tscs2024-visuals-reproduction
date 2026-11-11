@@ -1,3 +1,5 @@
+> **Repository moved.** Current development and downloads are maintained at [**depositar/tscs2024-visuals-reproduction**](https://github.com/depositar/tscs2024-visuals-reproduction). This repository is retained for existing citations and historical links; please make future changes in the depositar repository.
+
 # Generational Differences in Sharing Visuals by Phone and Preserving Digital Files
 
 [![Software and public aggregate checks](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml/badge.svg)](https://github.com/ThreeMonth03/tscs2024-visuals-reproduction/actions/workflows/public-reproducibility.yml)
